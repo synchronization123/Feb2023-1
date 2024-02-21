@@ -1,0 +1,47 @@
+You can achieve this task in Python using the `requests` library to make HTTP requests and the `openpyxl` library to work with Excel files. Here's a basic example of how you can do it:
+
+```python
+import requests
+import openpyxl
+
+# Function to fetch Jira IDs for given trace IDs
+def fetch_jira_ids(trace_ids, api_key):
+    jira_ids = {}
+    base_url = "https://jira.abc.com/rest/api/2/search?jql=text~{}"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}"
+    }
+    for trace_id in trace_ids:
+        url = base_url.format(trace_id)
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            data = response.json()
+            issues = data.get('issues', [])
+            if issues:
+                jira_id = issues[0]['key']
+                jira_ids[trace_id] = jira_id
+    return jira_ids
+
+# Load trace IDs from Excel file
+workbook = openpyxl.load_workbook('trace.xlsx')
+sheet = workbook.active
+trace_ids = [cell.value for cell in sheet['A'] if cell.value]
+
+# Fetch Jira IDs
+api_key = "your_api_key_here"
+jira_ids = fetch_jira_ids(trace_ids, api_key)
+
+# Write Jira IDs to output Excel file
+output_workbook = openpyxl.Workbook()
+output_sheet = output_workbook.active
+output_sheet['A1'] = 'Trace ID'
+output_sheet['B1'] = 'Jira ID'
+for i, (trace_id, jira_id) in enumerate(jira_ids.items(), start=2):
+    output_sheet[f'A{i}'] = trace_id
+    output_sheet[f'B{i}'] = jira_id
+
+output_workbook.save('output.xlsx')
+```
+
+Make sure to replace `"your_api_key_here"` with your actual API key. Also, ensure you have both `requests` and `openpyxl` libraries installed (`pip install requests openpyxl`).
