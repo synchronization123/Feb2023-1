@@ -1,0 +1,83 @@
+Certainly! Below is a PHP program that validates API connectivity with options to authenticate using either a username/password or a token:
+
+```php
+<?php
+function validateApiConnection($url, $username, $passwordOrToken, $useToken) {
+    // Initialize cURL session
+    $ch = curl_init();
+
+    // Set cURL options
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    if ($useToken) {
+        // Authentication using token
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            "Authorization: Bearer $passwordOrToken"
+        ));
+    } else {
+        // Authentication using username/password
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($ch, CURLOPT_USERPWD, "$username:$passwordOrToken");
+    }
+
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // You might want to set this to true in production
+
+    // Execute cURL request
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    // Close cURL session
+    curl_close($ch);
+
+    // Check if API connectivity was successful
+    if ($httpCode >= 200 && $httpCode < 300) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// Check if form was submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Retrieve form data
+    $url = $_POST["url"];
+    $username = $_POST["username"];
+    $passwordOrToken = $_POST["password_or_token"];
+    $useToken = isset($_POST["use_token"]) ? true : false;
+
+    // Validate API connectivity
+    $isConnected = validateApiConnection($url, $username, $passwordOrToken, $useToken);
+
+    // Display result
+    if ($isConnected) {
+        echo "API connectivity successful!";
+    } else {
+        echo "API connectivity failed.";
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Connectivity Validation</title>
+</head>
+<body>
+    <h2>Validate API Connectivity</h2>
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <label for="url">URL:</label><br>
+        <input type="text" id="url" name="url"><br><br>
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username"><br><br>
+        <label for="password_or_token">Password/Token:</label><br>
+        <input type="text" id="password_or_token" name="password_or_token"><br><br>
+        <input type="checkbox" id="use_token" name="use_token">
+        <label for="use_token">Authenticate using token</label><br><br>
+        <input type="submit" value="Validate">
+    </form>
+</body>
+</html>
+```
+
+This program allows users to input a URL, username, password, or token. It also provides an option to authenticate using a token. Upon submission, it validates API connectivity, authenticating either with username/password or token based on the user's choice, and displays a success or failure message accordingly.
