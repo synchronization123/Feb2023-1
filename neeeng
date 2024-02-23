@@ -1,0 +1,109 @@
+Here's a basic PHP program using Bootstrap for the UI and interacting with the provided API to create engagements:
+
+```php
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Engagement</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createEngagementModal">
+    VAPT Management
+  </button>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="createEngagementModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create Engagement</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="createEngagementForm">
+          <div class="form-group">
+            <label for="engagementName">Name of engagement:</label>
+            <input type="text" class="form-control" id="engagementName" name="name">
+          </div>
+          <div class="form-group">
+            <label for="tags">Tags:</label>
+            <input type="text" class="form-control" id="tags" name="tags">
+          </div>
+          <div class="form-group">
+            <label for="startDate">Start Date:</label>
+            <input type="date" class="form-control" id="startDate" name="target_start">
+          </div>
+          <div class="form-group">
+            <label for="endDate">End Date:</label>
+            <input type="date" class="form-control" id="endDate" name="target_end">
+          </div>
+          <div class="form-group">
+            <label for="status">Status:</label>
+            <input type="text" class="form-control" id="status" name="status" value="Not Started" readonly>
+          </div>
+          <div class="form-group">
+            <label for="assignedTo">Assigned to:</label>
+            <input type="text" class="form-control" id="assignedTo" name="lead">
+          </div>
+          <div class="form-group">
+            <label for="product">Product:</label>
+            <input type="text" class="form-control" id="product" name="product">
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+$(document).ready(function(){
+  $('#createEngagementForm').submit(function(event){
+    event.preventDefault();
+    
+    var formData = $(this).serializeArray();
+    var jsonData = {};
+    
+    $.each(formData, function(index, field){
+      jsonData[field.name] = field.value;
+    });
+    
+    $.ajax({
+      url: 'https://tammy.abc.com/api/v2/engagements/',
+      type: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'token sjndnsjjsjs'
+      },
+      data: JSON.stringify(jsonData),
+      success: function(response){
+        console.log(response);
+        alert('Engagement created successfully!');
+        $('#createEngagementModal').modal('hide');
+      },
+      error: function(xhr, status, error){
+        console.error(xhr.responseText);
+        alert('Error occurred while creating engagement. Please try again.');
+      }
+    });
+  });
+});
+</script>
+
+</body>
+</html>
+```
+
+This code creates a button that opens a modal with a form to create engagements. When the form is submitted, it sends a POST request to the provided API endpoint with the form data. Make sure to replace `'token sjndnsjjsjs'` with your actual authorization token.
