@@ -1,0 +1,52 @@
+To create a login form in XML for a Windows application, you can use WPF (Windows Presentation Foundation). Here's an example of how to create a login form in XAML, which is the markup language used in WPF:
+
+```xml
+<Window x:Class="LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Login" Height="200" Width="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Text="Username:" Margin="5"/>
+        <TextBox Grid.Row="0" Margin="5" x:Name="UsernameTextBox"/>
+
+        <TextBlock Grid.Row="1" Text="Password:" Margin="5"/>
+        <PasswordBox Grid.Row="1" Margin="5" x:Name="PasswordBox"/>
+
+        <Button Grid.Row="2" Content="Login" Margin="5" Click="LoginButton_Click"/>
+    </Grid>
+</Window>
+```
+
+This XAML code creates a simple login form with a username TextBox, a password PasswordBox, and a login Button. You can handle the click event of the login button in the code-behind to implement the login functionality.
+
+In the code-behind (e.g., LoginWindow.xaml.cs), you can handle the login logic:
+
+```csharp
+using System.Windows;
+
+public partial class LoginWindow : Window
+{
+    public LoginWindow()
+    {
+        InitializeComponent();
+    }
+
+    private void LoginButton_Click(object sender, RoutedEventArgs e)
+    {
+        string username = UsernameTextBox.Text;
+        string password = PasswordBox.Password;
+
+        // Add your login logic here
+        // For example, you can check if the username and password are valid
+        // and then navigate to the main application window if they are valid
+    }
+}
+```
+
+Ensure you have the appropriate namespaces and references set up in your project to use WPF.
