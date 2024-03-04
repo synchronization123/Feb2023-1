@@ -1,0 +1,11 @@
+Got it. Here's the modified code where "@" and everything after it is excluded from the username:
+
+```python
+user = next((user for user in user_details if user["id"] == lead_id), None)
+if user:
+    username = user.get("username", "")
+    email = username.split("@")[0]  # Exclude everything after '@' symbol
+if target_end and target_end != "None" and datetime.strptime(target_end, "%Y-%m-%d").date() < today:
+```
+
+This code will split the username at the "@" symbol and take the first part (the part before "@") as the username. This effectively removes "@abc.com" from the username.
