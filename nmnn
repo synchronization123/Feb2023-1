@@ -1,0 +1,8 @@
+Here's the properly formatted code:
+
+```python
+user = next((user for user in user_details if user["id"] == lead_id), None)
+if user:
+    email = user.get("username", "") + "@abc.com"
+    if target_end and target_end != "None" and datetime.strptime(target_end, "%Y-%m-%d").date() < today:
+```
