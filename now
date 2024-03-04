@@ -1,0 +1,23 @@
+Certainly! You can modify the code to extract the usernames and remove the "@" symbol and everything after it before counting the words. Here's the modified code:
+
+```python
+import requests
+
+def fetch_usernames(url, headers, params):
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code == 200:
+        usernames = [user["username"].split('@')[0] for user in response.json()["results"]]
+        print(f"List of users: {usernames}")
+        return usernames
+    else:
+        print("Failed to fetch usernames")
+        return []
+
+# Example usage:
+url = "your_api_url"
+headers = {"Authorization": "Bearer your_token"}
+params = {"query": "your_query_params"}
+usernames = fetch_usernames(url, headers, params)
+```
+
+This will split each username at the "@" symbol and take only the part before it, effectively removing the "@" symbol and everything after it.
