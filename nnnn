@@ -1,0 +1,11 @@
+It seems you have an indentation error in your code. Here's a corrected version, and I've excluded "@abc.com" for the last line:
+
+```python
+user = next((user for user in user_details if user["id"] == lead_id), None)
+if user:
+    email = user.get("username", "").split("@")[0]
+    if target_end and target_end != "None" and datetime.strptime(target_end, "%Y-%m-%d").date() < today:
+        # Your code here
+``` 
+
+This code assumes you're trying to extract the username from the email address by excluding "@abc.com" for the last line. If you meant something else, please clarify.
