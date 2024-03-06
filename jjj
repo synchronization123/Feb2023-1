@@ -1,27 +1,138 @@
-Here's how you can modify the Python code to include the specified headers:
+Sure, let's integrate an input field to add query strings in a separate tab within the UI. Below is the updated code with the modifications:
 
-```python
-import requests
-import base64
+```php
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Scanner</title>
+</head>
+<body>
+    <div id="tabs">
+        <ul>
+            <li><a href="#directory_tab">Select Directory</a></li>
+            <li><a href="#query_tab">Add Query String</a></li>
+        </ul>
+        <div id="directory_tab">
+            <h2>Select Directory to be Scanned</h2>
+            <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+                <label for="directory">Directory:</label>
+                <input type="text" id="directory" name="directory" required>
+                <button type="submit" name="submit">Scan</button>
+            </form>
+        </div>
+        <div id="query_tab">
+            <h2>Add Query String</h2>
+            <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+                <label for="query_string">Query String:</label>
+                <input type="text" id="query_string" name="query_string" required>
+                <button type="submit" name="add_query">Add</button>
+            </form>
+        </div>
+    </div>
 
-# Encode the SonarQube token to base64
-sonarwube_token = "YOUR_SONARWUBE_TOKEN_HERE"
-encoded_token = base64.b64encode(sonarwube_token.encode()).decode()
+    <?php
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Function to search for query strings in Java and JSP files
+        function searchCode($directory, $queryStrings) {
+            $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
+            $scannedData = array();
+            foreach ($files as $file) {
+                if ($file->isFile() && ($file->getExtension() == 'java' || $file->getExtension() == 'jsp')) {
+                    $content = file_get_contents($file->getPathname());
+                    foreach ($queryStrings as $query) {
+                        $pos = strpos($content, $query);
+                        if ($pos !== false) {
+                            $issueId = substr(md5($file->getPathname() . $query), 0, 8);
+                            $comment = "Match found at line " . substr_count(substr($content, 0, $pos), "\n") + 1;
+                            $filename = $file->getPathname();
+                            $lineNo = substr_count(substr($content, 0, $pos), "\n") + 1;
+                            $severity = "Medium"; // You can set the severity level based on your requirements
+                            $scannedData[] = array("Issue id" => $issueId, "Comment" => $comment, "Filename" => $filename, "Line no." => $lineNo, "Severity" => $severity);
+                            break; // If a match is found, no need to continue searching for other queries in the same file
+                        }
+                    }
+                }
+            }
+            return $scannedData;
+        }
 
-url = "https://abc.sonar.def.com/api/issues/do_transition"
-data = {
-    "issue": "jsjsjjsjsjdjd",
-    "transition": "confirm"
-}
-headers = {
-    "Authorization": "Basic " + encoded_token,
-    "Accept": "application/json",
-    "Content-Type": "application/json"
-}
+        // Function to add query string to MySQL table
+        function addQueryStringToDatabase($connection, $queryString) {
+            $query = "INSERT INTO query_strings_table (query_string) VALUES ('$queryString')";
+            if (mysqli_query($connection, $query)) {
+                echo "<p>Query string added successfully.</p>";
+            } else {
+                echo "Error: " . $query . "<br>" . mysqli_error($connection);
+            }
+        }
 
-response = requests.post(url, json=data, headers=headers)
+        // MySQL connection parameters
+        $servername = "localhost";
+        $username = "your_username";
+        $password = "your_password";
+        $database = "your_database";
 
-print(response.text)
+        // Connect to MySQL
+        $connection = mysqli_connect($servername, $username, $password, $database);
+
+        // Check connection
+        if (!$connection) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+
+        // Fetch query strings from MySQL table
+        $query = "SELECT query_string FROM query_strings_table";
+        $result = mysqli_query($connection, $query);
+        $queryStrings = array();
+        while ($row = mysqli_fetch_assoc($result)) {
+            $queryStrings[] = $row['query_string'];
+        }
+
+        // Close MySQL connection
+        mysqli_close($connection);
+
+        // Handle adding new query string
+        if (isset($_POST['add_query'])) {
+            $newQueryString = $_POST['query_string'];
+            $connection = mysqli_connect($servername, $username, $password, $database);
+            if (!$connection) {
+                die("Connection failed: " . mysqli_connect_error());
+            }
+            addQueryStringToDatabase($connection, $newQueryString);
+            mysqli_close($connection);
+        }
+
+        // Handle scanning directory
+        if (isset($_POST['submit'])) {
+            // Specify the directory to search
+            $directory = $_POST['directory'];
+
+            // Call the function to search for the query strings
+            $scannedData = searchCode($directory, $queryStrings);
+
+            // Display scanned data in table
+            if (!empty($scannedData)) {
+                echo "<h2>Scanned Data</h2>";
+                echo "<table border='1'>";
+                echo "<tr><th>Issue id</th><th>Comment</th><th>Filename</th><th>Line no.</th><th>Severity</th></tr>";
+                foreach ($scannedData as $data) {
+                    echo "<tr>";
+                    foreach ($data as $value) {
+                        echo "<td>".$value."</td>";
+                    }
+                    echo "</tr>";
+                }
+                echo "</table>";
+            } else {
+                echo "<p>No issues found.</p>";
+            }
+        }
+    }
+    ?>
+</body>
+</html>
 ```
 
-Replace `"YOUR_SONARWUBE_TOKEN_HERE"` with your actual SonarQube token. This code will encode the token to base64, then send a POST request with the provided data and include the specified headers.
+This code adds a new tab "Add Query String" where users can input a query string, and clicking "Add" will add it to the MySQL table. Additionally, the scanning functionality remains intact, allowing users to input a directory to be scanned for Java and JSP files.
