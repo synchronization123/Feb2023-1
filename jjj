@@ -1,7 +1,12 @@
-If the API requires authentication, you'll need to include an authentication key in your request headers. Here's how you can modify the Python code to include an authentication key:
+Here's how you can modify the Python code to include the specified headers:
 
 ```python
 import requests
+import base64
+
+# Encode the SonarQube token to base64
+sonarwube_token = "YOUR_SONARWUBE_TOKEN_HERE"
+encoded_token = base64.b64encode(sonarwube_token.encode()).decode()
 
 url = "https://abc.sonar.def.com/api/issues/do_transition"
 data = {
@@ -9,12 +14,14 @@ data = {
     "transition": "confirm"
 }
 headers = {
-    "Authorization": "Bearer YOUR_AUTH_TOKEN_HERE"
+    "Authorization": "Basic " + encoded_token,
+    "Accept": "application/json",
+    "Content-Type": "application/json"
 }
 
-response = requests.post(url, data=data, headers=headers)
+response = requests.post(url, json=data, headers=headers)
 
 print(response.text)
 ```
 
-Replace `"YOUR_AUTH_TOKEN_HERE"` with your actual authentication token. This code will send a POST request with the provided data and include the authentication token in the request headers.
+Replace `"YOUR_SONARWUBE_TOKEN_HERE"` with your actual SonarQube token. This code will encode the token to base64, then send a POST request with the provided data and include the specified headers.
