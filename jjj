@@ -1,0 +1,17 @@
+To send a POST request instead of a GET request, you can use various methods depending on your programming language or tool. Here's a basic example using Python with the requests library:
+
+```python
+import requests
+
+url = "https://abc.sonar.def.com/api/issues/do_transition"
+data = {
+    "issue": "jsjsjjsjsjdjd",
+    "transition": "confirm"
+}
+
+response = requests.post(url, data=data)
+
+print(response.text)
+```
+
+Replace the `"jsjsjjsjsjdjd"` and `"confirm"` with your actual issue ID and transition value. This code will send a POST request to the specified URL with the provided data.
