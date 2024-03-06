@@ -1,4 +1,4 @@
-To send a POST request instead of a GET request, you can use various methods depending on your programming language or tool. Here's a basic example using Python with the requests library:
+If the API requires authentication, you'll need to include an authentication key in your request headers. Here's how you can modify the Python code to include an authentication key:
 
 ```python
 import requests
@@ -8,10 +8,13 @@ data = {
     "issue": "jsjsjjsjsjdjd",
     "transition": "confirm"
 }
+headers = {
+    "Authorization": "Bearer YOUR_AUTH_TOKEN_HERE"
+}
 
-response = requests.post(url, data=data)
+response = requests.post(url, data=data, headers=headers)
 
 print(response.text)
 ```
 
-Replace the `"jsjsjjsjsjdjd"` and `"confirm"` with your actual issue ID and transition value. This code will send a POST request to the specified URL with the provided data.
+Replace `"YOUR_AUTH_TOKEN_HERE"` with your actual authentication token. This code will send a POST request with the provided data and include the authentication token in the request headers.
