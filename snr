@@ -1,4 +1,4 @@
-Sure, here's a Python script that fulfills your requirements:
+It seems there's an error related to parsing the JSON response. Let's modify the code to handle potential errors and improve the way we fetch JSON data:
 
 ```python
 import requests
@@ -13,8 +13,13 @@ token = "djdnndnsn"
 # Function to download data from a project key
 def download_data(project_key):
     endpoint = f"{url}/api/hotspots/search?status=TO_REVIEW&projectKey={project_key}"
-    response = requests.get(endpoint, headers={"Authorization": f"Bearer {token}"})
-    return response.json()
+    try:
+        response = requests.get(endpoint, headers={"Authorization": f"Bearer {token}"})
+        response.raise_for_status()  # Raise an exception for HTTP errors
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error downloading data for project {project_key}: {e}")
+        return None
 
 # Function to show progress in command prompt
 def show_progress(project_key):
@@ -24,7 +29,11 @@ def show_progress(project_key):
 for key in project_keys:
     show_progress(key)
     data = download_data(key)
-    # Process the downloaded data as needed
+    if data:
+        # Process the downloaded data as needed
+        pass
+    else:
+        print(f"Failed to download data for project: {key}")
 ```
 
-This script defines functions to download data from each project key and to show progress in the command prompt. It then iterates over the list of project keys, downloading data for each one sequentially and displaying progress as it goes. You can further process the downloaded data within the loop according to your requirements.
+This updated code includes error handling for HTTP requests and printing error messages when data download fails for a project. This should help in troubleshooting and identifying any issues with fetching JSON data.
