@@ -1,0 +1,38 @@
+To convert all JSON files in a folder to XLSX format properly, you can use a programming language like Python with libraries such as pandas and openpyxl. Here's a sample script to accomplish this task:
+
+```python
+import os
+import pandas as pd
+
+# Function to convert JSON to XLSX
+def convert_json_to_xlsx(json_file, output_file):
+    # Read JSON file into pandas DataFrame
+    df = pd.read_json(json_file)
+    
+    # Write DataFrame to XLSX file
+    df.to_excel(output_file, index=False)
+
+# Folder containing JSON files
+folder_path = 'path/to/json/files'
+
+# Output folder for XLSX files
+output_folder = 'output/path/'
+
+# Create output folder if it doesn't exist
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+# Loop through each file in the folder
+for file_name in os.listdir(folder_path):
+    if file_name.endswith('.json'):
+        # Construct full file paths
+        json_file = os.path.join(folder_path, file_name)
+        output_file = os.path.join(output_folder, os.path.splitext(file_name)[0] + '.xlsx')
+        
+        # Convert JSON to XLSX
+        convert_json_to_xlsx(json_file, output_file)
+
+print("Conversion completed successfully.")
+```
+
+Replace `'path/to/json/files'` with the path to the folder containing your JSON files, and `'output/path/'` with the desired path for the output XLSX files. Make sure you have Python installed on your system along with the pandas and openpyxl libraries (`pip install pandas openpyxl`). Then, run this script, and it will convert all JSON files in the specified folder to XLSX format properly.
