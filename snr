@@ -1,0 +1,30 @@
+Sure, here's a Python script that fulfills your requirements:
+
+```python
+import requests
+
+# List of Sonar projects keys
+project_keys = ["jdjdj", "djdjnd"]  # Add more project keys as needed
+
+# URL and token for the Sonar API
+url = "https://sonar.abc.com/"
+token = "djdnndnsn"
+
+# Function to download data from a project key
+def download_data(project_key):
+    endpoint = f"{url}/api/hotspots/search?status=TO_REVIEW&projectKey={project_key}"
+    response = requests.get(endpoint, headers={"Authorization": f"Bearer {token}"})
+    return response.json()
+
+# Function to show progress in command prompt
+def show_progress(project_key):
+    print(f"Downloading data for project: {project_key}")
+
+# Download data from all project keys sequentially
+for key in project_keys:
+    show_progress(key)
+    data = download_data(key)
+    # Process the downloaded data as needed
+```
+
+This script defines functions to download data from each project key and to show progress in the command prompt. It then iterates over the list of project keys, downloading data for each one sequentially and displaying progress as it goes. You can further process the downloaded data within the loop according to your requirements.
